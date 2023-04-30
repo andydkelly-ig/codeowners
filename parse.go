@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	emailRegexp    = regexp.MustCompile(`\A[A-Z0-9a-z\._%\+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,6}\z`)
-	teamRegexp     = regexp.MustCompile(`\A@([a-zA-Z0-9\-]+\/[a-zA-Z0-9_\-]+)\z`)
-	usernameRegexp = regexp.MustCompile(`\A@([a-zA-Z0-9\-]+)\z`)
+	emailRegexp    			= regexp.MustCompile(`\A[A-Z0-9a-z\._%\+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,6}\z`)
+	teamRegexp     			= regexp.MustCompile(`\A@([a-zA-Z0-9\-]+\/[a-zA-Z0-9_\-]+)\z`)
+	usernameRegexp 			= regexp.MustCompile(`\A@([a-zA-Z0-9\-]+)\z`)
+	usernameRegexpGitlab 	= regexp.MustCompile(`\A@([a-zA-Z0-9\-]+\.[a-zA-Z0-9\-])\z`)
 )
 
 const (
@@ -155,6 +156,11 @@ func newOwner(s string) (Owner, error) {
 	}
 
 	match = usernameRegexp.FindStringSubmatch(s)
+	if match != nil {
+		return Owner{Value: match[1], Type: UsernameOwner}, nil
+	}
+
+	match = usernameRegexpGitlab.FindStringSubmatch(s)
 	if match != nil {
 		return Owner{Value: match[1], Type: UsernameOwner}, nil
 	}
